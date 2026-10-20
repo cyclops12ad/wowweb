@@ -1,0 +1,93 @@
+---
+import { main, links } from '../data/perfil.js';
+---
+
+<footer class="site-footer">
+  <div class="container cols">
+    <div>
+      <p class="brand">WoWeb</p>
+      <p class="muted">Web personal de {main.name}, {main.region}-{main.realm}.</p>
+    </div>
+    <nav aria-label="Secciones">
+      <h2 class="eyebrow">Secciones</h2>
+      <ul>
+        <li><a href="#personajes">Personajes</a></li>
+        <li><a href="#progreso">Progreso</a></li>
+        <li><a href="#diario">Diario</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Enlaces externos">
+      <h2 class="eyebrow">Enlaces</h2>
+      <ul>
+        {links.map((l) => <li><a href={l.href} target="_blank" rel="noopener">{l.label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+  <div class="container legal">
+    <small>© {new Date().getFullYear()} WoWeb · Sitio de fans sin relación con Blizzard Entertainment. World of Warcraft® es una marca de Blizzard Entertainment, Inc.</small>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    background: var(--bg-2);
+    padding-top: 3rem;
+  }
+
+  .cols {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  @media (max-width: 640px) {
+    .cols {
+      grid-template-columns: 1fr 1fr;
+    }
+    .cols > :first-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  h2 {
+    margin-bottom: 0.75rem;
+    color: var(--faint);
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  a {
+    color: var(--soft);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--gold-light);
+  }
+
+  .legal {
+    margin-top: 2.5rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--line);
+    color: var(--faint);
+  }
+</style>

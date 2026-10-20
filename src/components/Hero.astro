@@ -1,0 +1,180 @@
+---
+import { main, tagline } from '../data/perfil.js';
+import { classColors } from '../data/es.js';
+
+const factionColor = main.faction === 'Alianza' ? 'var(--alliance-soft)' : 'var(--horde-soft)';
+const stats = [
+  { label: 'Nivel de objeto', value: main.ilvl },
+  { label: 'Puntuación M+', value: main.score, color: main.scoreColor },
+  { label: 'Banda', value: main.mainRaid ? `${main.mainRaid.killed}/${main.mainRaid.total} ${main.mainRaid.difficulty}` : '—' },
+  { label: 'Logros', value: main.achievementPoints.toLocaleString('es-ES') },
+];
+---
+
+<section class="hero" style={`--class: ${classColors[main.classKey]}; --faction: ${factionColor}`}>
+  <div class="container inner">
+    <img class="avatar" src={main.avatar} alt={`Retrato de ${main.name}`} width="84" height="84" />
+
+    <p class="eyebrow">World of Warcraft · {main.region}-{main.realm} · <span class="faction">{main.faction}</span></p>
+
+    <h1 class="name gold-text">{main.name}</h1>
+    <div class="rule" aria-hidden="true"></div>
+
+    <p class="spec">
+      <span class="class">{main.className} {main.spec}</span>
+      <span class="sep" aria-hidden="true">·</span>
+      {main.race}
+      {
+        main.guild && (
+          <>
+            <span class="sep" aria-hidden="true">·</span>
+            <span class="nowrap">&lt;{main.guild}&gt;</span>
+          </>
+        )
+      }
+    </p>
+    <p class="tagline">{tagline}</p>
+
+    <div class="actions">
+      <a class="btn btn-gold" href="#progreso">Progreso de la temporada</a>
+      <a class="btn btn-ghost" href={main.url} target="_blank" rel="noopener">Ver en Raider.IO</a>
+    </div>
+
+    <dl class="stats panel">
+      {
+        stats.map((s) => (
+          <div>
+            <dt class="eyebrow">{s.label}</dt>
+            <dd style={s.color && `color: ${s.color}`}>{s.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    padding-block: clamp(3.5rem, 10vw, 7rem) clamp(3rem, 8vw, 5rem);
+    text-align: center;
+    isolation: isolate;
+  }
+
+  /* Halo con el color de clase detrás del nombre */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(40rem 22rem at 50% 30%, color-mix(in srgb, var(--class) 14%, transparent), transparent 70%),
+      radial-gradient(60rem 30rem at 50% 0%, rgb(248 183 0 / 0.08), transparent 70%);
+  }
+
+  .inner {
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+  }
+
+  .avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    box-shadow:
+      0 0 0 4px rgb(248 183 0 / 0.12),
+      0 0 30px color-mix(in srgb, var(--class) 40%, transparent);
+  }
+
+  .faction {
+    color: var(--faction);
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-size: var(--fs-hero);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    filter: drop-shadow(0 4px 30px rgb(248 183 0 / 0.25));
+  }
+
+  .rule {
+    width: min(26rem, 80%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), var(--gold-light), var(--gold-deep), transparent);
+  }
+
+  .spec {
+    color: var(--soft);
+    font-weight: 500;
+  }
+
+  .class {
+    color: var(--class);
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  .sep {
+    margin-inline: 0.4rem;
+    color: var(--faint);
+  }
+
+  .tagline {
+    max-width: 36rem;
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: min(100%, 52rem);
+    margin: clamp(2rem, 6vw, 3.5rem) 0 0;
+    padding: 0;
+  }
+
+  .stats div {
+    padding: 1.25rem 1rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .stats div + div {
+    border-left: 1px solid var(--line);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 600;
+    color: var(--gold-light);
+  }
+
+  @media (max-width: 640px) {
+    .stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stats div:nth-child(3) {
+      border-left: 0;
+    }
+    .stats div:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+  }
+</style>

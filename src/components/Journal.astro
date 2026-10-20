@@ -1,0 +1,83 @@
+---
+import { posts } from '../data/perfil.js';
+
+const fmt = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+
+<section id="diario" class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Diario y guías</p>
+      <h2 class="section-title">Lo que voy aprendiendo.</h2>
+      <p class="section-lead">Crónicas de banda, rutas y builds.</p>
+    </header>
+
+    <div class="grid">
+      {
+        posts.map((p) => (
+          <a class="panel post" href="#">
+            <div class="top">
+              <span class="tag">{p.tag}</span>
+              <time datetime={p.date}>{fmt.format(new Date(p.date))}</time>
+            </div>
+            <h3>{p.title}</h3>
+            <p>{p.excerpt}</p>
+            <span class="more">Leer →</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .post {
+    padding: 1.5rem;
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .tag {
+    padding: 0.2rem 0.6rem;
+    border-radius: 99px;
+    border: 1px solid rgb(248 183 0 / 0.35);
+    background: rgb(248 183 0 / 0.08);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+  }
+
+  time {
+    font-size: 0.85rem;
+    color: var(--faint);
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.25;
+  }
+
+  p {
+    color: var(--muted);
+  }
+
+  .more {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+</style>

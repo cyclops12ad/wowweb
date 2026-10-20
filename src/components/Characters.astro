@@ -1,0 +1,124 @@
+---
+import { characters } from '../data/perfil.js';
+import { classColors } from '../data/es.js';
+---
+
+<section id="personajes" class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Personajes</p>
+      <h2 class="section-title">{characters.length > 1 ? 'Main y alters.' : 'Mi main.'}</h2>
+      <p class="section-lead">Datos actualizados desde Raider.IO.</p>
+    </header>
+
+    <ul class="grid cards">
+      {
+        characters.map((c) => (
+          <li class="panel card" style={`--class: ${classColors[c.classKey]}`}>
+            <img class="avatar" src={c.avatar} alt="" width="56" height="56" loading="lazy" />
+            <div class="info">
+              <h3><a href={c.url} target="_blank" rel="noopener">{c.name}</a></h3>
+              <p class="class">{c.className} {c.spec}</p>
+              <p class="realm">{c.race} · {c.region}-{c.realm}</p>
+            </div>
+            <dl class="meta">
+              <div><dt>Rol</dt><dd>{c.role}</dd></div>
+              <div><dt>M+</dt><dd style={`color: ${c.scoreColor}`}>{c.score}</dd></div>
+              <div><dt>iLvl</dt><dd class="ilvl">{c.ilvl}</dd></div>
+            </dl>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cards {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 340px));
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .card {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.25rem;
+    overflow: hidden;
+    border-top: 2px solid var(--class);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 7rem;
+    background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--class) 18%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card:hover {
+    border-color: var(--line-strong);
+    border-top-color: var(--class);
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--class) 60%, transparent);
+    background: color-mix(in srgb, var(--class) 12%, var(--bg));
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+  }
+
+  h3 a {
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--gold-light);
+  }
+
+  .realm {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .class {
+    color: var(--class);
+    font-weight: 500;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .ilvl {
+    color: var(--q-epic);
+  }
+</style>

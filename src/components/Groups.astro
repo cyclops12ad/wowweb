@@ -1,0 +1,64 @@
+---
+import { DEFAULT_STATE } from '../scripts/grupos-core.js';
+
+const players = DEFAULT_STATE.players.map((p) => p.name);
+---
+
+<section id="grupo" class="section">
+  <div class="container">
+    <a class="panel teaser" href={`${import.meta.env.BASE_URL}/grupos/`}>
+      <div class="text">
+        <p class="eyebrow">Classic · Forever</p>
+        <h2 class="section-title">El grupo de mazmorra.</h2>
+        <p class="section-lead">Cinco jugadores, un tanque, un healer y tres DPS. Cada uno marca lo que no quiere jugar y el planificador saca todas las combinaciones posibles, con plantillas y profesiones.</p>
+        <span class="btn btn-gold">Abrir el planificador →</span>
+      </div>
+      <ul class="roster" aria-label="Jugadores del grupo">
+        {players.map((name) => <li>{name}</li>)}
+      </ul>
+    </a>
+  </div>
+</section>
+
+<style>
+  .teaser {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    padding: clamp(1.75rem, 5vw, 3rem);
+    background:
+      radial-gradient(30rem 16rem at 100% 0%, rgb(47 125 225 / 0.12), transparent 70%),
+      linear-gradient(180deg, var(--panel-2), var(--panel));
+  }
+
+  @media (max-width: 760px) {
+    .teaser {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .text {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+
+  .roster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .roster li {
+    padding: 0.55rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: rgb(255 255 255 / 0.03);
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+</style>

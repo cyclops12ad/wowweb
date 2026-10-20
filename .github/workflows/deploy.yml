@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: withastro/action@v6
+      # Runs on the Node version withastro/action just set up
+      - run: npm test
 
   deploy:
     # PRs only run the build as a check; publishing happens from main

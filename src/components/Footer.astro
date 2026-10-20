@@ -1,5 +1,7 @@
 ---
 import { main, links } from '../data/perfil.js';
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <footer class="site-footer">
@@ -11,9 +13,10 @@ import { main, links } from '../data/perfil.js';
     <nav aria-label="Secciones">
       <h2 class="eyebrow">Secciones</h2>
       <ul>
-        <li><a href="#personajes">Personajes</a></li>
-        <li><a href="#progreso">Progreso</a></li>
-        <li><a href="#diario">Diario</a></li>
+        <li><a href={`${base}/#personajes`}>Personajes</a></li>
+        <li><a href={`${base}/#progreso`}>Progreso</a></li>
+        <li><a href={`${base}/grupos/`}>Grupos de mazmorra</a></li>
+        <li><a href={`${base}/#diario`}>Diario</a></li>
       </ul>
     </nav>
     <nav aria-label="Enlaces externos">

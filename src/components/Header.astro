@@ -1,13 +1,14 @@
 ---
 import { main } from '../data/perfil.js';
 
-const nav = [
-  { href: '#personajes', label: 'Personajes' },
-  { href: '#progreso', label: 'Progreso' },
-  { href: '#diario', label: 'Diario' },
-  { href: '#contacto', label: 'Contacto' },
-];
 const base = import.meta.env.BASE_URL;
+// Rutas absolutas para que el menú funcione también desde otras páginas
+const nav = [
+  { href: `${base}/#personajes`, label: 'Personajes' },
+  { href: `${base}/#progreso`, label: 'Progreso' },
+  { href: `${base}/grupos/`, label: 'Grupos' },
+  { href: `${base}/#diario`, label: 'Diario' },
+];
 ---
 
 <header class="site-header">
@@ -26,7 +27,7 @@ const base = import.meta.env.BASE_URL;
       </ul>
     </nav>
 
-    <a class="btn btn-gold cta" href="#contacto">Contactar</a>
+    <a class="btn btn-gold cta" href={`${base}/#contacto`}>Contactar</a>
   </div>
 </header>
 

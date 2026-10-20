@@ -1,0 +1,150 @@
+---
+import { main } from '../data/perfil.js';
+
+const nav = [
+  { href: '#personajes', label: 'Personajes' },
+  { href: '#progreso', label: 'Progreso' },
+  { href: '#diario', label: 'Diario' },
+  { href: '#contacto', label: 'Contacto' },
+];
+const base = import.meta.env.BASE_URL;
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={base}>
+      <span class="crest" aria-hidden="true">W</span>
+      <span class="brand-text">
+        <strong>WoWeb</strong>
+        <span class="eyebrow">{main.region} · {main.realm}</span>
+      </span>
+    </a>
+
+    <nav aria-label="Secciones">
+      <ul>
+        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <a class="btn btn-gold cta" href="#contacto">Contactar</a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgb(11 10 9 / 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bar {
+    min-height: var(--header-h);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .crest {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--gold-ink);
+    background: linear-gradient(160deg, var(--gold-light), var(--gold) 50%, var(--gold-deep));
+    box-shadow: 0 0 18px rgb(248 183 0 / 0.3);
+  }
+
+  .brand-text {
+    display: grid;
+    line-height: 1.2;
+  }
+
+  .brand-text strong {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+  }
+
+  .brand-text .eyebrow {
+    font-size: 0.65rem;
+  }
+
+  nav {
+    margin-inline: auto;
+  }
+
+  ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--soft);
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    color: var(--gold-light);
+    background: rgb(255 255 255 / 0.04);
+  }
+
+  .cta {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  /* En móvil el menú pasa a una segunda fila desplazable */
+  @media (max-width: 760px) {
+    .bar {
+      flex-wrap: wrap;
+      gap: 0 1rem;
+      padding-top: 0.6rem;
+    }
+    .cta {
+      margin-left: auto;
+    }
+    nav {
+      order: 3;
+      width: calc(100% + 2 * var(--gutter));
+      margin: 0.4rem calc(-1 * var(--gutter)) 0;
+      padding: 0 var(--gutter);
+      border-top: 1px solid var(--line);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    ul {
+      justify-content: center;
+      min-width: max-content;
+      margin-inline: auto;
+    }
+    nav a {
+      padding-inline: 0.55rem;
+      letter-spacing: 0.04em;
+    }
+  }
+</style>

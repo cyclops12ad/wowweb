@@ -1,0 +1,111 @@
+---
+import { characters, classColors } from '../data/perfil.js';
+---
+
+<section id="personajes" class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Personajes</p>
+      <h2 class="section-title">Main y alters.</h2>
+      <p class="section-lead">Cada clase con su color, como en el juego.</p>
+    </header>
+
+    <ul class="grid cards">
+      {
+        characters.map((c) => (
+          <li class="panel card" style={`--class: ${classColors[c.className]}`}>
+            <div class="avatar" aria-hidden="true">{c.name[0]}</div>
+            <div class="info">
+              <h3>{c.name}</h3>
+              <p class="class">{c.spec} · {c.className}</p>
+            </div>
+            <dl class="meta">
+              <div><dt>Rol</dt><dd>{c.role}</dd></div>
+              <div><dt>Nivel</dt><dd>{c.level}</dd></div>
+              <div><dt>iLvl</dt><dd class="ilvl">{c.ilvl}</dd></div>
+            </dl>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cards {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .card {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.25rem;
+    overflow: hidden;
+    border-top: 2px solid var(--class);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 7rem;
+    background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--class) 18%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+
+  .card:hover {
+    border-color: var(--line-strong);
+    border-top-color: var(--class);
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--class) 60%, transparent);
+    background: color-mix(in srgb, var(--class) 12%, var(--bg));
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--class);
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+  }
+
+  .class {
+    color: var(--class);
+    font-weight: 500;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  dt {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .ilvl {
+    color: var(--q-epic);
+  }
+</style>

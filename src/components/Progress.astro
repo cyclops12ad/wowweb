@@ -1,0 +1,142 @@
+---
+import { raids, highlights, main } from '../data/perfil.js';
+
+const difficultyName = { N: 'Normal', H: 'Heroico', M: 'Mítico' };
+const difficultyColor = { N: 'var(--q-uncommon)', H: 'var(--q-rare)', M: 'var(--q-epic)' };
+const score = main.stats.find((s) => s.label === 'Puntuación M+')?.value;
+---
+
+<section id="progreso" class="section">
+  <div class="container">
+    <header class="section-head">
+      <p class="eyebrow">Temporada actual</p>
+      <h2 class="section-title">Progreso.</h2>
+      <p class="section-lead">Bandas, Mítica+ y los logros de los que más orgulloso estoy.</p>
+    </header>
+
+    <div class="layout">
+      <article class="panel block">
+        <p class="eyebrow">Bandas</p>
+        <ul class="raids">
+          {
+            raids.map((r) => (
+              <li style={`--diff: ${difficultyColor[r.difficulty]}`}>
+                <div class="raid-row">
+                  <span>{r.name} <span class="diff">{difficultyName[r.difficulty]}</span></span>
+                  <strong>{r.killed}/{r.total}</strong>
+                </div>
+                <div
+                  class="bar"
+                  role="progressbar"
+                  aria-label={`${r.name} ${difficultyName[r.difficulty]}`}
+                  aria-valuemin="0"
+                  aria-valuemax={r.total}
+                  aria-valuenow={r.killed}
+                >
+                  <span style={`width: ${(r.killed / r.total) * 100}%`} />
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+
+      <article class="panel block score">
+        <p class="eyebrow">Mítica+</p>
+        <p class="score-value">{score}</p>
+        <p class="muted">Puntuación de la temporada</p>
+      </article>
+
+      <article class="panel block">
+        <p class="eyebrow">Logros destacados</p>
+        <ul class="highlights">
+          {highlights.map((h) => <li style={`--q: var(--q-${h.quality})`}>{h.label}</li>)}
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .block {
+    padding: 1.5rem;
+    display: grid;
+    align-content: start;
+    gap: 1.25rem;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .raid-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .diff {
+    color: var(--diff);
+    font-weight: 600;
+  }
+
+  .bar {
+    height: 8px;
+    border-radius: 99px;
+    background: rgb(255 255 255 / 0.06);
+    overflow: hidden;
+  }
+
+  .bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--diff) 60%, black), var(--diff));
+    box-shadow: 0 0 12px var(--diff);
+  }
+
+  .score {
+    text-align: center;
+    justify-items: center;
+    align-content: center;
+  }
+
+  .score-value {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--q-legendary);
+    text-shadow: 0 0 30px rgb(255 128 0 / 0.35);
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .highlights li {
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--q) 35%, transparent);
+    background: color-mix(in srgb, var(--q) 8%, transparent);
+    color: var(--q);
+    font-weight: 600;
+  }
+</style>

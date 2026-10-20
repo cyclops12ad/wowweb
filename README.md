@@ -20,7 +20,9 @@ En los pull requests solo se comprueba que la build funciona.
 ```
 src/pages/          una página por archivo (index.astro = portada)
 src/layouts/        estructura común: <head>, cabecera y pie
-src/styles/         estilos globales (responsive, modo claro/oscuro)
+src/components/     una sección por archivo, con sus propios estilos
+src/data/perfil.js  tus personajes, progreso, entradas y enlaces (edita aquí)
+src/styles/         colores, tipografía y piezas comunes (botones, paneles…)
 public/             imágenes y archivos estáticos
 astro.config.mjs    configuración (URL y ruta base de GitHub Pages)
 ```

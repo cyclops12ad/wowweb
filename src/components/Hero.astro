@@ -1,39 +1,51 @@
 ---
-import { main, classColors } from '../data/perfil.js';
+import { main, tagline } from '../data/perfil.js';
+import { classColors } from '../data/es.js';
 
 const factionColor = main.faction === 'Alianza' ? 'var(--alliance-soft)' : 'var(--horde-soft)';
+const stats = [
+  { label: 'Nivel de objeto', value: main.ilvl },
+  { label: 'Puntuación M+', value: main.score, color: main.scoreColor },
+  { label: 'Banda', value: main.mainRaid ? `${main.mainRaid.killed}/${main.mainRaid.total} ${main.mainRaid.difficulty}` : '—' },
+  { label: 'Logros', value: main.achievementPoints.toLocaleString('es-ES') },
+];
 ---
 
-<section class="hero" style={`--class: ${classColors[main.className]}; --faction: ${factionColor}`}>
+<section class="hero" style={`--class: ${classColors[main.classKey]}; --faction: ${factionColor}`}>
   <div class="container inner">
+    <img class="avatar" src={main.avatar} alt={`Retrato de ${main.name}`} width="84" height="84" />
+
     <p class="eyebrow">World of Warcraft · {main.region}-{main.realm} · <span class="faction">{main.faction}</span></p>
 
-    <h1>
-      <span class="name gold-text">{main.name}</span>
-      <span class="title">{main.title}</span>
-    </h1>
+    <h1 class="name gold-text">{main.name}</h1>
     <div class="rule" aria-hidden="true"></div>
 
     <p class="spec">
-      <span class="class">{main.spec} · {main.className}</span>
+      <span class="class">{main.className} {main.spec}</span>
       <span class="sep" aria-hidden="true">·</span>
       {main.race}
-      <span class="sep" aria-hidden="true">·</span>
-      <span class="nowrap">&lt;{main.guild}&gt;</span>
+      {
+        main.guild && (
+          <>
+            <span class="sep" aria-hidden="true">·</span>
+            <span class="nowrap">&lt;{main.guild}&gt;</span>
+          </>
+        )
+      }
     </p>
-    <p class="tagline">{main.tagline}</p>
+    <p class="tagline">{tagline}</p>
 
     <div class="actions">
-      <a class="btn btn-gold" href="#personajes">Ver mis personajes</a>
-      <a class="btn btn-ghost" href="#progreso">Progreso de la temporada</a>
+      <a class="btn btn-gold" href="#progreso">Progreso de la temporada</a>
+      <a class="btn btn-ghost" href={main.url} target="_blank" rel="noopener">Ver en Raider.IO</a>
     </div>
 
     <dl class="stats panel">
       {
-        main.stats.map((s) => (
+        stats.map((s) => (
           <div>
             <dt class="eyebrow">{s.label}</dt>
-            <dd>{s.value}</dd>
+            <dd style={s.color && `color: ${s.color}`}>{s.value}</dd>
           </div>
         ))
       }
@@ -44,7 +56,7 @@ const factionColor = main.faction === 'Alianza' ? 'var(--alliance-soft)' : 'var(
 <style>
   .hero {
     position: relative;
-    padding-block: clamp(4rem, 12vw, 8rem) clamp(3rem, 8vw, 5rem);
+    padding-block: clamp(3.5rem, 10vw, 7rem) clamp(3rem, 8vw, 5rem);
     text-align: center;
     isolation: isolate;
   }
@@ -66,13 +78,18 @@ const factionColor = main.faction === 'Alianza' ? 'var(--alliance-soft)' : 'var(
     gap: 1.25rem;
   }
 
-  .faction {
-    color: var(--faction);
+  .avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    box-shadow:
+      0 0 0 4px rgb(248 183 0 / 0.12),
+      0 0 30px color-mix(in srgb, var(--class) 40%, transparent);
   }
 
-  h1 {
-    display: grid;
-    gap: 0.25rem;
+  .faction {
+    color: var(--faction);
   }
 
   .name {
@@ -83,13 +100,6 @@ const factionColor = main.faction === 'Alianza' ? 'var(--alliance-soft)' : 'var(
     line-height: 1;
     text-transform: uppercase;
     filter: drop-shadow(0 4px 30px rgb(248 183 0 / 0.25));
-  }
-
-  .title {
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 3vw, 2rem);
-    font-weight: 400;
-    color: var(--soft);
   }
 
   .rule {

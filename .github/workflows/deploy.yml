@@ -22,8 +22,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: withastro/action@v3
+      - uses: actions/checkout@v7
+      - uses: withastro/action@v6
 
   deploy:
     # PRs only run the build as a check; publishing happens from main
@@ -35,4 +35,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

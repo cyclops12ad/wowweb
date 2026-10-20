@@ -1,0 +1,665 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Grupos de mazmorra · WoWeb" description="Planificador de grupos de mazmorra para Classic / Forever: vetos, combinaciones, plantillas y profesiones.">
+  <div class="container section grupos">
+    <header class="head">
+      <div>
+        <p class="eyebrow">Classic · Forever</p>
+        <h1 class="section-title">Grupos de mazmorra</h1>
+        <p class="sub">Grupo de cinco: un tanque, un healer y tres DPS. Marca lo que cada uno no quiere jugar y aquí salen todos los grupos posibles.</p>
+      </div>
+      <div class="share">
+        <button class="btn btn-gold" id="share" type="button">Compartir</button>
+        <div class="status" id="status" role="status"><span class="dot"></span><span>Cargando…</span></div>
+        <input id="shareUrl" type="text" readonly hidden aria-label="Enlace para compartir" />
+      </div>
+    </header>
+
+    <section>
+      <div class="sechead"><h2>Plantillas guardadas</h2></div>
+      <div id="saved"></div>
+    </section>
+
+    <section>
+      <div class="sechead">
+        <h2>Combinaciones posibles</h2>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="unique" /> Sin clases repetidas</label>
+          <label class="toggle"><input type="checkbox" id="showSpec" /> Separar por especialización</label>
+          <label class="toggle"><input type="checkbox" id="armorMix" /> Una de cada armadura</label>
+          <label class="toggle"><input type="checkbox" id="flex22" /> Mínimo 2 que puedan tanquear y 2 que puedan curar</label>
+        </div>
+      </div>
+      <p class="count" id="count"></p>
+      <div id="team"></div>
+    </section>
+
+    <section>
+      <div class="sechead">
+        <h2>Profesiones</h2>
+        <p class="sub">Solo informativo. Cada combo se asigna a un jugador dentro de cada plantilla guardada.</p>
+      </div>
+      <div class="profs" id="profs"></div>
+    </section>
+
+    <section>
+      <div class="sechead">
+        <h2>Jugadores</h2>
+        <button class="ghost" id="add" type="button">+ Añadir jugador</button>
+      </div>
+      <div class="players" id="players"></div>
+      <dl class="cover" id="cover"></dl>
+    </section>
+
+    <section>
+      <div class="sechead">
+        <h2>Clases y especializaciones</h2>
+        <div class="legend">
+          <span>✓ la juega</span><span>✕ vetada</span><span>– bloqueada por rol</span><span><span class="star">★</span> clase preferida, sube la combinación en la lista</span>
+        </div>
+      </div>
+      <div class="scroll"><table id="matrix"></table></div>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../scripts/grupos.js';
+</script>
+
+<!-- Global (pero dentro de .grupos) porque el contenido se pinta con JS y no lleva las marcas de estilo de Astro -->
+<style is:global>
+  .grupos {
+    --surface: var(--panel);
+    --sunk: var(--bg-2);
+    --ink: var(--fg);
+    --accent: var(--gold);
+    --tank: var(--alliance-soft);
+    --heal: #5fc28c;
+    --dps: var(--horde-soft);
+    --ban: #e57b70;
+    --ban-bg: #3a2022;
+    --arm-tela: #c39ae0;
+    --arm-cuero: #d3a46a;
+    --arm-malla: #6cc3cc;
+    --arm-placas: #a9b6c6;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+    }
+    .sub {
+      color: var(--muted);
+      margin: 0.4rem 0 0;
+      max-width: 62ch;
+    }
+    .head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      align-items: end;
+      justify-content: space-between;
+    }
+    .head .eyebrow {
+      margin-bottom: 0.6rem;
+    }
+    .share {
+      display: grid;
+      gap: 0.5rem;
+      justify-items: end;
+    }
+    .share input {
+      width: min(100%, 22rem);
+      font: inherit;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.6rem;
+      background: var(--sunk);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+    }
+    .status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .dot.ok {
+      background: var(--heal);
+    }
+    section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sechead {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sechead .sub {
+      margin: 0;
+    }
+    .toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      align-items: center;
+    }
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+    .ghost {
+      background: rgb(255 255 255 / 0.03);
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+    .ghost:hover {
+      border-color: var(--gold-deep);
+    }
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .toggle input {
+      accent-color: var(--accent);
+      width: 16px;
+      height: 16px;
+    }
+
+    .role {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .role.T {
+      color: var(--tank);
+    }
+    .role.H {
+      color: var(--heal);
+    }
+    .role.D {
+      color: var(--dps);
+    }
+    .what {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      min-width: 0;
+    }
+    .sw {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex: none;
+      box-shadow: 0 0 0 1px rgb(0 0 0 / 0.25);
+    }
+    .empty {
+      background: var(--surface);
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      padding: 18px;
+      color: var(--muted);
+    }
+    .warn {
+      background: var(--ban-bg);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .warn b {
+      color: var(--ban);
+    }
+
+    .players {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+    }
+    .pl,
+    .prof,
+    .saved-card,
+    .cover {
+      background: linear-gradient(180deg, var(--panel-2), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .pl {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+    .plrow {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    input[type='text'] {
+      flex: 1;
+      min-width: 0;
+      font: inherit;
+      font-weight: 700;
+      font-size: 1.05rem;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid var(--line-strong);
+      color: var(--ink);
+      padding: 2px 0;
+    }
+    .x {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1.1rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    .x:hover {
+      color: var(--ban);
+    }
+    .lbl {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .pill {
+      border: 1px solid var(--line-strong);
+      background: var(--sunk);
+      border-radius: 999px;
+      padding: 3px 11px;
+      font-size: 0.88rem;
+    }
+    .pill[aria-pressed='true'] {
+      background: var(--ban-bg);
+      border-color: var(--ban);
+      color: var(--ban);
+      text-decoration: line-through;
+    }
+    .cover {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4px 12px;
+      margin: 0;
+      font-size: 0.95rem;
+      padding: 12px 14px;
+    }
+    .cover dt {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+    .cover dd {
+      margin: 0;
+      color: var(--muted);
+      min-width: 0;
+    }
+    .cover .none {
+      color: var(--ban);
+      font-weight: 700;
+    }
+
+    .scroll {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 520px;
+      font-variant-numeric: tabular-nums;
+    }
+    th,
+    td {
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      font-weight: 700;
+      padding: 10px 6px;
+      font-size: 0.92rem;
+      z-index: 1;
+    }
+    th.spec,
+    td.spec {
+      text-align: left;
+      padding: 6px 12px;
+      position: sticky;
+      left: 0;
+      background: var(--surface);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    tr.cls th,
+    tr.cls td {
+      background: var(--sunk);
+    }
+    tr.cls th {
+      padding: 7px 12px;
+      text-align: left;
+    }
+    .clsname {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+    .rb {
+      display: inline-block;
+      width: 20px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.72rem;
+      border-radius: 4px;
+      margin-right: 8px;
+      color: var(--bg);
+    }
+    .rb.T {
+      background: var(--tank);
+    }
+    .rb.H {
+      background: var(--heal);
+    }
+    .rb.D {
+      background: var(--dps);
+    }
+    .cell {
+      width: 100%;
+      min-height: 34px;
+      border: 0;
+      background: transparent;
+      font-size: 1rem;
+      color: var(--heal);
+    }
+    .cell:hover {
+      background: var(--sunk);
+    }
+    .cell.ban {
+      color: var(--ban);
+      background: var(--ban-bg);
+    }
+    .cell.off {
+      color: var(--muted);
+      opacity: 0.55;
+    }
+    .clscell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .all {
+      border: 0;
+      background: transparent;
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 6px;
+    }
+    .all:hover {
+      color: var(--ink);
+    }
+    .all.ban {
+      color: var(--ban);
+      font-weight: 700;
+    }
+    .fav {
+      border: 0;
+      background: transparent;
+      font-size: 1.05rem;
+      line-height: 1;
+      color: var(--muted);
+      padding: 6px;
+      border-radius: 6px;
+      opacity: 0.5;
+    }
+    .fav:hover {
+      opacity: 1;
+    }
+    .fav[aria-pressed='true'] {
+      color: var(--accent);
+      opacity: 1;
+    }
+    .star {
+      color: var(--accent);
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .count {
+      margin: 0;
+      color: var(--muted);
+    }
+    .count b {
+      color: var(--ink);
+    }
+
+    table.combos {
+      min-width: 960px;
+    }
+    table.combos th,
+    table.combos td {
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.combos td.num,
+    table.combos th.num {
+      text-align: center;
+      color: var(--muted);
+      width: 2.5em;
+    }
+    .flex {
+      white-space: nowrap;
+    }
+    .cname {
+      display: block;
+      font-weight: 700;
+    }
+    .freec {
+      color: var(--muted);
+      font-style: italic;
+    }
+    .more {
+      align-self: flex-start;
+    }
+    .save {
+      font-size: 0.82rem;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+    .saved-tag {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .profs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+    .prof {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .pname {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 6px;
+      align-items: baseline;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      line-height: 1.15;
+    }
+    .pname .plus {
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .parm {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .pnote {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .fit {
+      margin: 0;
+      font-size: 0.88rem;
+    }
+    .pline {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--heal);
+      margin-top: 2px;
+    }
+    .pline.bad {
+      color: var(--ban);
+    }
+    .arm {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 1px 7px;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      color: var(--muted);
+    }
+    .parm .arm,
+    .clsname .arm {
+      margin-top: 0;
+    }
+    .arm.a0 {
+      color: var(--arm-tela);
+    }
+    .arm.a1 {
+      color: var(--arm-cuero);
+    }
+    .arm.a2 {
+      color: var(--arm-malla);
+    }
+    .arm.a3 {
+      color: var(--arm-placas);
+    }
+
+    .saved-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .saved-card {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+    .saved-head {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .saved-head input {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+    }
+    .saved-slots {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+    }
+    .sslot {
+      background: var(--sunk);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .sslot.free {
+      background: transparent;
+      border: 1px dashed var(--line-strong);
+    }
+    .sslot.stale {
+      outline: 1px solid var(--ban);
+    }
+    .sslot .arm {
+      align-self: flex-start;
+    }
+    .sprof {
+      font: inherit;
+      font-size: 0.82rem;
+      margin-top: 6px;
+      padding: 4px 6px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--ink);
+      width: 100%;
+      min-width: 0;
+    }
+
+    @media (max-width: 640px) {
+      .share {
+        justify-items: start;
+      }
+    }
+  }
+</style>

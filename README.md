@@ -10,6 +10,7 @@ https://cyclops12ad.github.io/wowweb/
 npm install      # solo la primera vez
 npm run dev      # servidor local en http://localhost:4321/wowweb/
 npm run build    # genera la versión final en dist/
+npm test         # tests de la lógica (también se ejecutan en cada PR)
 ```
 
 Cada push a `main` publica la web automáticamente (`.github/workflows/deploy.yml`),
@@ -26,7 +27,8 @@ En los pull requests solo se comprueba que la build funciona.
 ## Estructura
 
 ```
-src/pages/          una página por archivo (index.astro = portada)
+src/pages/          una página por archivo (index.astro = portada, grupos.astro = planificador)
+src/scripts/        JavaScript del navegador; grupos-core.js tiene la lógica del planificador y sus tests
 src/layouts/        estructura común: <head>, cabecera y pie
 src/components/     una sección por archivo, con sus propios estilos
 src/data/perfil.js  qué personajes mostrar, frase, entradas y enlaces (edita aquí)

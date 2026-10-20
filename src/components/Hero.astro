@@ -108,7 +108,11 @@ const stats = [
     background: linear-gradient(90deg, transparent, var(--gold-deep), var(--gold-light), var(--gold-deep), transparent);
   }
 
+  /* Flex: el espaciado no depende de los espacios entre etiquetas (Astro 7 los elimina) */
   .spec {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     color: var(--soft);
     font-weight: 500;
   }
@@ -122,7 +126,7 @@ const stats = [
   }
 
   .sep {
-    margin-inline: 0.4rem;
+    margin-inline: 0.65rem;
     color: var(--faint);
   }
 

@@ -17,6 +17,12 @@ y cada día a las 06:00 UTC se vuelve a generar para refrescar los datos de Raid
 La build necesita conexión a internet: si Raider.IO no responde, falla y sigue publicada la versión anterior.
 En los pull requests solo se comprueba que la build funciona.
 
+## Flujo de trabajo
+
+- `main` está protegida: solo se cambia mediante PR, y el PR no se puede fusionar hasta que la comprobación `build` pasa.
+- Los PR pueden marcarse con fusión automática: GitHub los fusiona (y borra la rama) en cuanto la build pasa.
+- Dependabot abre cada semana un PR si hay versiones nuevas de las acciones del workflow o de Astro.
+
 ## Estructura
 
 ```
